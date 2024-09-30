@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centered Tick Mark with Transition</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .tick-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 150px;
+            height: 150px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+        .tick-mark {
+            font-size: 80px;
+            color: white;
+            font-weight: bold;
+            line-height: 1;
+            transition: transform 0.3s ease-in-out, font-size 0.3s ease-in-out;
+        }
+        .tick-container:hover .tick-mark {
+            transform: rotate(45deg) scale(1.1);
+            font-size: 90px;
+        }
+    </style>
+</head>
+<body>
+    <div class="tick-container">
+        <div class="tick-mark">✓</div>
+    </div>
+</body>
+</html>
