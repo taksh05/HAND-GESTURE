@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Page</title>
+    <style>
+        body {
+            background-image: url(https://fos.cmb.ac.lk/blog/wp-content/uploads/2023/05/hand-gesture.jpg);
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 350px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin: 5px 0 20px 0;
+            display: inline-block;
+            border: none;
+            background: #f1f1f1;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            background-color: #ddd;
+            outline: none;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            opacity: 0.9;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            opacity: 1;
+        }
+
+        .container span {
+            color: #000;
+            display: block;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .container span a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Log In / Sign Up</h2>
+    <form id="loginForm">
+        <div>
+            <label for="uname"><b>Username</b></label>
+            <input type="text" placeholder="Enter Username" name="uname" required>
+        </div>
+        <div>
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" required>
+        </div>
+        <button type="button" onclick="handleLogin()">Log in</button>
+        <span>Don't have an account? <a href="/sih/interface2.html">Sign up</a></span>
+    </form>
+</div>
+
+<script>
+    function handleLogin() {
+        // Perform login logic here (e.g., validate user credentials)
+
+        // Open a new HTML file in a new tab
+        window.open('interface2.html', '_blank'); // Replace 'newfile.html' with the path to your new HTML file
+    }
+</script>
+
+</body>
+</html>
