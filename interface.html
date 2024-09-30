@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Hand Gesture Recognition</title>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <link rel="stylesheet" href="navbar.css">
+    
+    <style>
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        video {
+            margin-top: 100px;
+            margin-left: 300px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            width: 640px;
+            height: 480px;
+        }
+        #gesture {
+            margin-top: 20px;
+            margin-left: 567px;
+            font-size: 24px;
+            color: black;
+            font-weight: bold;
+        }
+        
+        #navbar {
+            
+            background: #333;
+            padding: 10px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #navbar a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+        #navbar input {
+            margin-left: 10px;
+        }
+        #navbar button {
+            margin-left: 10px;
+        }
+        #profile-container {
+            display: flex;
+            align-items: center;
+        }
+        #profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            object-fit: cover;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar">
+        <a id="logo">Aestroid</a>
+        <div>
+            <a href="#">Practice</a>
+            <a href="#">Performance</a>
+            <a href="/sih/yt.html">Recorded</a>
+            <a href="#">Contact Us</a>
+            <input placeholder="Settings">
+            <button>Search</button>
+        </div>
+        <div id="profile-container">
+            <img id="profile-image" src="/sih/wp6177643.webp" alt="Profile Picture">
+        </div>
+    </div>
+    
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div id="gesture">Gesture: None</div>
+    
+    <script>
+        const videoElement = document.getElementById('video');
+        const canvasElement = document.getElementById('canvas');
+        const gestureElement = document.getElementById('gesture');
+        const canvasCtx = canvasElement.getContext('2d');
+
+        // Function to request camera access
+        async function setupCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+                return new Promise((resolve) => {
+                    videoElement.onloadedmetadata = () => {
+                        resolve();
+                    };
+                });
+            } catch (err) {
+                console.error('Error accessing camera: ', err);
+            }
+        }
+
+        // Initialize MediaPipe Hands
+        const hands = new Hands({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+        });
+
+        hands.setOptions({
+            maxNumHands: 2,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        hands.onResults(onResults);
+
+        async function initializeApp() {
+            await setupCamera();
+            const camera = new Camera(videoElement, {
+                onFrame: async () => {
+                    await hands.send({image: videoElement});
+                },
+                width: 640,
+                height: 480
+            });
+            camera.start();
+        }
+
+        initializeApp();
+
+        function onResults(results) {
+            canvasElement.width = videoElement.videoWidth;
+            canvasElement.height = videoElement.videoHeight;
+
+            canvasCtx.save();
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+            if (results.multiHandLandmarks) {
+                for (const landmarks of results.multiHandLandmarks) {
+                    drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: '#00FF00', lineWidth: 5});
+                    drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 2});
+                }
+                const gesture = recognizeGesture(results.multiHandLandmarks[0]);
+                gestureElement.innerText = `Gesture: ${gesture}`;
+            } else {
+                gestureElement.innerText = 'Gesture: None';
+            }
+
+            canvasCtx.restore();
+        }
+
+        function recognizeGesture(landmarks) {
+            const thumbIsOpen = landmarks[4].y < landmarks[3].y;
+            const indexIsOpen = landmarks[8].y < landmarks[7].y;
+            const middleIsOpen = landmarks[12].y < landmarks[11].y;
+            const ringIsOpen = landmarks[16].y < landmarks[15].y;
+            const pinkyIsOpen = landmarks[20].y < landmarks[19].y;
+
+            if (thumbIsOpen && indexIsOpen && !middleIsOpen && !ringIsOpen && !pinkyIsOpen) {
+                return 'Victory';
+            } else if (!thumbIsOpen && indexIsOpen && middleIsOpen && ringIsOpen && pinkyIsOpen) {
+                return 'Four';
+            } else if (!thumbIsOpen && indexIsOpen && middleIsOpen && !ringIsOpen && !pinkyIsOpen) {
+                return 'Peace';
+            } else {
+                return 'Unknown';
+            }
+        }
+    </script>
+</body>
+</html>
